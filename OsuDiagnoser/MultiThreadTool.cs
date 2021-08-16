@@ -11,12 +11,12 @@ namespace OsuDiagnoser
 		public static TOut[] BatchTask<TIn, TOut>(TIn[] items, Func<TIn, TOut> processFunc, int threads)
 		{
 			if (items.Length < threads) threads = items.Length;
-			
+
 			var threadBatches = new List<TIn>?[threads];
 			for (var i = 0; i < items.Length; i++)
 			{
 				threadBatches[i % threads] ??= new List<TIn>();
-				
+
 				threadBatches[i % threads]!.Add(items[i]);
 			}
 
