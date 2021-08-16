@@ -18,7 +18,7 @@ If your osu! version ends in -lazer, use lazer2stable to export your files first
 			var raw = new DirectoryInfo(Console.ReadLine()!);
 			
 			DirectoryInfo osuFolder;
-			
+
 			if (!raw.Exists)
 			{
 				Console.WriteLine("That directory does not exist.");
@@ -61,6 +61,17 @@ If your osu! version ends in -lazer, use lazer2stable to export your files first
 			
 			File.WriteAllLines("missing.txt", missingFiles.Select(f => f.file));
 			Console.WriteLine("Saved missing file list to missing.txt");
+			
+			// this is awful but it mostly should kinda work
+			var missingFileSets = missingFiles.Select(f => f.file.Split("osu/Songs/")[new Index(1, true)] // after "osu/Songs/"
+															.Split('/')[0] // first directory in the list
+													  )
+											  .Distinct() // only get each set once!
+											  .ToArray();
+			
+			Console.WriteLine($"{missingFileSets.Length} sets contain missing files");
+			File.WriteAllLines("sets_to_redownload.txt", missingFileSets);
+			Console.WriteLine("Saved sets with missing files list to sets_to_redownload.txt");
 		}
 	}
 }
