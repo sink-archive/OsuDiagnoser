@@ -27,10 +27,12 @@ If your osu! version ends in -lazer, use lazer2stable to export your files first
 			switch (raw.Name)
 			{
 				// songs folder found!
-				case "Songs" when raw.Parent is { Name: "osu" }:
+				// osu! should have an ! on a standard install but in some cases, like a lutris install, its missing
+                case "Songs" when raw.Parent is { Name: "osu!" } or { Name: "osu" }:
 					osuFolder = raw;
 					break;
-				// osu root folder instead
+				// osu root folder instead - see above comment about !
+				case "osu!" when raw.EnumerateDirectories().Any(d => d.Name   == "Songs"):
 				case "osu" when raw.EnumerateDirectories().Any(d => d.Name   == "Songs"):
 					osuFolder = raw.EnumerateDirectories().First(d => d.Name == "Songs");
 					break;
@@ -63,7 +65,7 @@ If your osu! version ends in -lazer, use lazer2stable to export your files first
 
 			// this is awful but it mostly should kinda work
 			var missingFileSets = missingFiles
-								 .Select(f => f.file.Split("osu/Songs/")[new Index(1, true)] // after "osu/Songs/"
+								 .Select(f => f.file.Split("/Songs/")[new Index(1, true)] // after "osu/Songs/"
 											   .Split('/')[0] // first directory in the list
 										)
 								 .Distinct() // only get each set once!
